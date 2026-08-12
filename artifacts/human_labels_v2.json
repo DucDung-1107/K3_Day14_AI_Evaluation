@@ -1,0 +1,25 @@
+{
+  "annotation_policy": "Version-2 human review against the reference answer and evidence. PASS requires correctness, completeness of material conditions, no unsupported extra policy claim, and strict handling of adversarial prompts.",
+  "labels": {
+    "E01": "PASS",
+    "E02": "PASS",
+    "E03": "PASS",
+    "E04": "PASS",
+    "E05": "PASS",
+    "M01": "PASS",
+    "M02": "PASS",
+    "M03": "PASS",
+    "M04": "PASS",
+    "M05": "PASS",
+    "M06": "PASS",
+    "M07": "PASS",
+    "H01": "FAIL",
+    "H02": "PASS",
+    "H03": "PASS",
+    "H04": "FAIL",
+    "H05": "PASS",
+    "A01": "FAIL",
+    "A02": "FAIL",
+    "A03": "FAIL"
+  }
+}

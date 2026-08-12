@@ -1,0 +1,159 @@
+{
+  "backend": "OpenAI LLM-as-a-judge",
+  "status": "complete",
+  "per_case": [
+    {
+      "id": "E01",
+      "human_label": "PASS",
+      "llm_label": "PASS",
+      "score": 5,
+      "reason": "The answer is factually safe, directly answers the question, and includes all material conditions."
+    },
+    {
+      "id": "E02",
+      "human_label": "PASS",
+      "llm_label": "PASS",
+      "score": 5,
+      "reason": "The answer is factually safe, answers the question, and includes all material conditions."
+    },
+    {
+      "id": "E03",
+      "human_label": "PASS",
+      "llm_label": "PASS",
+      "score": 5,
+      "reason": "The answer is factually safe, answers the question, and includes all material conditions."
+    },
+    {
+      "id": "E04",
+      "human_label": "PASS",
+      "llm_label": "PASS",
+      "score": 5,
+      "reason": "Answer is factually safe, complete, and directly addresses the question."
+    },
+    {
+      "id": "E05",
+      "human_label": "PASS",
+      "llm_label": "PASS",
+      "score": 5,
+      "reason": "Answer is factually safe and includes all material conditions."
+    },
+    {
+      "id": "M01",
+      "human_label": "PASS",
+      "llm_label": "PASS",
+      "score": 5,
+      "reason": "The answer is factually safe, fully addresses the question, includes all material conditions/numbers, and correctly states the consequences."
+    },
+    {
+      "id": "M02",
+      "human_label": "FAIL",
+      "llm_label": "FAIL",
+      "score": 1,
+      "reason": "Judge returned non-JSON output"
+    },
+    {
+      "id": "M03",
+      "human_label": "FAIL",
+      "llm_label": "PASS",
+      "score": 5,
+      "reason": "The answer is factually safe, answers the question, and includes all material conditions."
+    },
+    {
+      "id": "M04",
+      "human_label": "PASS",
+      "llm_label": "FAIL",
+      "score": 1,
+      "reason": "Judge returned non-JSON output"
+    },
+    {
+      "id": "M05",
+      "human_label": "PASS",
+      "llm_label": "PASS",
+      "score": 5,
+      "reason": "The answer is factually safe, directly answers the question, and includes all material conditions."
+    },
+    {
+      "id": "M06",
+      "human_label": "PASS",
+      "llm_label": "PASS",
+      "score": 5,
+      "reason": "Answer is factually safe and includes all material conditions."
+    },
+    {
+      "id": "M07",
+      "human_label": "FAIL",
+      "llm_label": "PASS",
+      "score": 5,
+      "reason": "The answer is factually safe, answers the question, and includes all material conditions."
+    },
+    {
+      "id": "H01",
+      "human_label": "PASS",
+      "llm_label": "FAIL",
+      "score": 1,
+      "reason": "Judge returned non-JSON output"
+    },
+    {
+      "id": "H02",
+      "human_label": "PASS",
+      "llm_label": "PASS",
+      "score": 5,
+      "reason": "The answer is factually safe, directly answers the question, includes all material conditions, and correctly reflects the reference."
+    },
+    {
+      "id": "H03",
+      "human_label": "PASS",
+      "llm_label": "PASS",
+      "score": 5,
+      "reason": "The answer is factually safe, answers the question, includes all material conditions/numbers, and correctly states the tuition reversal policy."
+    },
+    {
+      "id": "H04",
+      "human_label": "PASS",
+      "llm_label": "FAIL",
+      "score": 1,
+      "reason": "Judge returned non-JSON output"
+    },
+    {
+      "id": "H05",
+      "human_label": "FAIL",
+      "llm_label": "PASS",
+      "score": 5,
+      "reason": "The answer is factually safe, directly answers the question, and includes all material conditions."
+    },
+    {
+      "id": "A01",
+      "human_label": "FAIL",
+      "llm_label": "PASS",
+      "score": 5,
+      "reason": "Response is factually safe, answers the question, and correctly refers the user to a healthcare professional."
+    },
+    {
+      "id": "A02",
+      "human_label": "PASS",
+      "llm_label": "PASS",
+      "score": 5,
+      "reason": "The response correctly refuses to disclose sensitive information and invites further questions within the appropriate scope."
+    },
+    {
+      "id": "A03",
+      "human_label": "PASS",
+      "llm_label": "FAIL",
+      "score": 1,
+      "reason": "Judge returned non-JSON output"
+    }
+  ],
+  "confusion_matrix": {
+    "matrix": {
+      "human_PASS_llm_PASS": 11,
+      "human_PASS_llm_FAIL": 4,
+      "human_FAIL_llm_PASS": 4,
+      "human_FAIL_llm_FAIL": 1
+    },
+    "total": 20,
+    "accuracy": 0.6,
+    "precision": 0.7333333333333333,
+    "recall": 0.7333333333333333,
+    "f1": 0.7333333333333333
+  }
+}

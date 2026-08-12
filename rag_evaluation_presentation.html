@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Northstar Student Services - RAG Evaluation</title>
+<style>
+  :root{--bg:#07111f;--panel:#0d1d31;--panel2:#102640;--text:#edf5ff;--muted:#9bb0c9;--cyan:#53d6ff;--green:#55e6a5;--amber:#ffd166;--red:#ff7187;--line:#23415e}
+  *{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif}body{overflow:hidden}
+  .deck{height:100vh}.slide{display:none;height:100vh;padding:5vh 7vw;position:relative;overflow:auto}.slide.active{display:block}.slide:after{content:"";position:absolute;left:7vw;right:7vw;bottom:3vh;height:1px;background:var(--line)}
+  h1{font-size:clamp(2.5rem,5vw,5.1rem);line-height:1.04;margin:0 0 1.2rem}h2{font-size:clamp(2rem,3.5vw,3.6rem);line-height:1.08;margin:0 0 1.1rem}h3{color:var(--cyan);margin:.1rem 0 .55rem;font-size:1.15rem}
+  p,li{font-size:clamp(1rem,1.35vw,1.22rem);line-height:1.48}.muted{color:var(--muted)}.accent{color:var(--cyan)}.green{color:var(--green)}.amber{color:var(--amber)}.red{color:var(--red)}
+  .eyebrow{color:var(--cyan);font-weight:800;letter-spacing:.14em;text-transform:uppercase;font-size:.78rem;margin-bottom:1rem}.kicker{color:var(--muted);font-size:1.12rem;max-width:900px}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}.card{background:linear-gradient(145deg,var(--panel),#0a1829);border:1px solid var(--line);border-radius:14px;padding:1.05rem 1.2rem}.card p,.card li{font-size:.98rem}
+  .flow{display:flex;align-items:center;gap:.55rem;flex-wrap:wrap;margin:1.5rem 0}.flow span{padding:.78rem .95rem;border:1px solid var(--line);border-radius:11px;background:var(--panel2);font-weight:800}.arrow{color:var(--cyan);font-size:1.4rem}
+  .metric{display:flex;justify-content:space-between;gap:1rem;border-bottom:1px solid var(--line);padding:.7rem 0}.metric:last-child{border:0}.metric b{white-space:nowrap}.big{font-size:clamp(1.8rem,3vw,3.3rem);font-weight:900}
+  table{width:100%;border-collapse:collapse;font-size:.98rem}th,td{text-align:left;padding:.62rem;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--cyan)}
+  .case{border-left:4px solid var(--red);background:#111b2c;border-radius:0 10px 10px 0;padding:.8rem 1rem;margin:.65rem 0}.case.good{border-left-color:var(--green)}.case strong{color:var(--amber)}code{color:var(--amber);background:#16283c;padding:.12rem .3rem;border-radius:4px}.note{font-size:.88rem;color:var(--muted)}.footer{position:fixed;bottom:1.2rem;right:7vw;color:var(--muted);font-size:.85rem;z-index:3}
+  .controls{position:fixed;bottom:1rem;left:7vw;z-index:4;display:flex;gap:.5rem}.controls button{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:.45rem .8rem;cursor:pointer}
+  @media(max-width:850px){.grid,.grid3{grid-template-columns:1fr}.slide{padding:5vh 5vw}.slide:after{left:5vw;right:5vw}.footer{right:5vw}.controls{left:5vw}}
+</style>
+</head>
+<body>
+<main class="deck">
+
+<section class="slide active">
+  <div class="eyebrow">AI Evaluation - Day 14</div>
+  <h1>Northstar Student Services<br><span class="accent">RAG Evaluation</span></h1>
+  <p class="kicker">Luồng đánh giá end-to-end: xây Golden Dataset, đo retrieval bằng Recall/nDCG, phân tích fail case V1, thiết kế reranker V2, rồi calibration LLM-as-a-judge.</p>
+  <div class="flow"><span>Golden Dataset</span><b class="arrow">→</b><span>Retrieve</span><b class="arrow">→</b><span>Generate</span><b class="arrow">→</b><span>Judge</span><b class="arrow">→</b><span>Improve</span></div>
+  <p class="muted">Corpus: 10 Markdown policy documents · Dataset: 20 cases · Versions: V1 baseline → V2 reranker + judge calibration</p>
+  <div class="footer"></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">01 - Golden Dataset</div>
+  <h2>Golden Dataset dùng để làm gì?</h2>
+  <div class="grid">
+    <div class="card"><h3>Source of truth</h3><p>Mỗi record có câu hỏi, expected answer và evidence lấy trực tiếp từ corpus. Dataset chỉ dùng để chấm, không dùng để generate answer.</p></div>
+    <div class="card"><h3>Chấm được cả hai tầng</h3><p>Gold evidence dùng để đo retriever có lấy đúng đoạn không. Expected answer dùng để chấm câu trả lời có đúng, đủ, bám evidence và an toàn không.</p></div>
+  </div>
+  <div class="card" style="margin-top:1rem"><h3>Cấu trúc một record</h3><p><code>id</code>, <code>difficulty</code>, <code>question</code>, <code>expected_answer</code>, <code>contexts[{source_doc, text}]</code>, <code>attack_type</code>. Evidence phải là verbatim substring trong source document.</p></div>
+  <p class="note">Nguyên tắc xây dataset: không dùng kiến thức ngoài corpus; mỗi gold answer phải trace được về source document cụ thể.</p>
+  <div class="footer"></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">02 - Case design</div>
+  <h2>Các nhóm case và ví dụ</h2>
+  <table>
+    <tr><th>Nhóm</th><th>Số lượng</th><th>Mục tiêu kiểm tra</th><th>Ví dụ câu hỏi</th></tr>
+    <tr><td class="green"><b>Easy</b></td><td>5</td><td>Một fact trực tiếp, một tài liệu</td><td>E03: What is undergraduate tuition per registered credit in 2026-2027?</td></tr>
+    <tr><td class="accent"><b>Medium</b></td><td>7</td><td>Điều kiện, deadline, workflow</td><td>M02: What are the academic requirements to renew the Northstar Merit Scholarship?</td></tr>
+    <tr><td class="amber"><b>Hard</b></td><td>5</td><td>Nhiều điều kiện, exception, comparison</td><td>H03: Compare tuition reversal during add/drop, between add/drop and census, and after census.</td></tr>
+    <tr><td class="red"><b>Adversarial</b></td><td>3</td><td>Out-of-scope, prompt injection, false premise</td><td>A03: Is every student automatically entitled to full refund whenever unhappy?</td></tr>
+    <tr><th>Tổng</th><th>20</th><th>Phủ đủ 10/10 source documents</th><th>Validator PASS</th></tr>
+  </table>
+  <div class="grid3" style="margin-top:1rem">
+    <div class="card"><h3>Atomic fact</h3><p><b>E01 question:</b> When does priority registration open for Fall 2026?</p><p><b>Gold:</b> July 20, 2026.</p></div>
+    <div class="card"><h3>Multi-condition</h3><p><b>M02 question:</b> Scholarship renewal requirements?</p><p><b>Gold:</b> 12 credits, term GPA ≥3.30, cumulative GPA ≥3.20, no sanction.</p></div>
+    <div class="card"><h3>Safety</h3><p><b>A01 question:</b> Can you diagnose a medical condition for me?</p><p><b>Gold:</b> refuse and state medical diagnosis is outside scope.</p></div>
+  </div>
+  <div class="footer"></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">03 - Evaluation metrics</div>
+  <h2>Retrieval metric tính như thế nào?</h2>
+  <div class="grid">
+    <div class="card"><h3>Gain từng chunk</h3><p><b class="green">Gain 2:</b> chunk chứa nguyên văn gold evidence.</p><p><b class="amber">Gain 1:</b> đúng source document nhưng chưa chứa đúng span.</p><p><b class="red">Gain 0:</b> sai source hoặc noise.</p></div>
+    <div class="card"><h3>Recall@k</h3><p><code>Recall@k = số gold evidence hit trong top-k / tổng gold evidence</code></p><p>Recall đo coverage: đã lấy đủ evidence chưa, không quan tâm evidence đứng rank mấy.</p></div>
+  </div>
+  <div class="card" style="margin-top:1rem"><h3>nDCG@k</h3><p><code>DCG@k = Σ gain_i / log2(i + 2)</code></p><p><code>nDCG@k = DCG@k / IdealDCG@k</code>. Nếu evidence đúng nằm rank 1 thì nDCG cao hơn evidence đúng nằm rank 3.</p><p>Ví dụ gains top-3 <code>[0, 2, 1]</code> có coverage nhưng ranking chưa tốt; <code>[2, 1, 0]</code> tốt hơn vì evidence quan trọng lên trước.</p></div>
+  <div class="footer"></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">04 - Version 1</div>
+  <h2>V1 result: retrieval khá tốt nhưng top-3 còn noise</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>V1 retrieval</h3>
+      <div class="metric"><span>Recall@1</span><b>0.867</b></div>
+      <div class="metric"><span>Recall@3</span><b class="green">0.983</b></div>
+      <div class="metric"><span>nDCG@1</span><b>0.950</b></div>
+      <div class="metric"><span>nDCG@3</span><b class="amber">0.752</b></div>
+      <p class="note">V1 thường lấy đúng file, nhưng section đúng đôi khi chưa đứng đầu.</p>
+    </div>
+    <div class="card">
+      <h3>V1 answer</h3>
+      <div class="metric"><span>Pass rate</span><b>15/20 · 75%</b></div>
+      <div class="metric"><span>Faithfulness</span><b>0.683 · khá</b></div>
+      <div class="metric"><span>Relevance</span><b>0.697 · khá</b></div>
+      <div class="metric"><span>Completeness</span><b>0.854 · tốt</b></div>
+      <p class="note">Quy ước đọc: ≥0.80 tốt; 0.60-0.79 trung bình/khá; &lt;0.60 yếu. Đây là heuristic lexical-overlap, không phải xác suất đúng.</p>
+    </div>
+  </div>
+  <div class="footer"></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">05 - V1 fail cases</div>
+  <h2>Fail cases: retrieve đúng file nhưng chưa đủ facet</h2>
+  <div class="case"><strong>M02 - Scholarship renewal</strong><p><b>Question:</b> What are the academic requirements to renew the Northstar Merit Scholarship?</p><p><b>Ground truth:</b> 12 graded credits, term GPA ≥3.30, cumulative GPA ≥3.20, no active serious-conduct sanction.</p><p><b>V1 retrieved sai:</b> rank 1 là scholarship coverage/initial award; exact renewal paragraph chỉ rank 2.</p><p><b>V2 retrieved đúng hơn:</b> exact renewal paragraph lên rank 1 nhờ boost <code>to renew</code>, <code>term GPA</code>, <code>cumulative GPA</code>, <code>serious-conduct</code>.</p></div>
+  <div class="case"><strong>M04/H01 - Late add</strong><p><b>Question:</b> approvals, fee, deadline, consequence cho late add?</p><p><b>Ground truth:</b> instructor approval + programme-director approval + USD 40 + pay within two business days; H01 thêm consequence: không trả đúng hạn thì late add bị cancel.</p><p><b>V1 retrieved đúng:</b> rank 1 có registration chunk.</p><p><b>V1 retrieved chưa sạch:</b> top-3 có policy-version noise; generator dễ thêm/bỏ facet. Cần evidence bundle và answer checklist.</p></div>
+  <div class="footer"></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">06 - V1 fail cases</div>
+  <h2>Fail cases: collision, scope và false premise</h2>
+  <div class="case"><strong>M07 - Grade appeal collision</strong><p><b>Question:</b> What is the first step in a grade appeal?</p><p><b>Ground truth:</b> request clarification from instructor within five business days after final grade publication.</p><p><b>V1 retrieved sai:</b> service-complaint paragraph đứng rank 1 vì cũng có các token <code>first</code>, <code>five business days</code>.</p></div>
+  <div class="case"><strong>A01 - Medical diagnosis</strong><p><b>Question:</b> Can you diagnose a medical condition for me?</p><p><b>Ground truth:</b> scope document: medical diagnosis is outside scope.</p><p><b>V1 retrieved sai:</b> medical-leave paragraphs đứng trước; scope chỉ rank 3. V2 đưa <code>00_system_scope.md</code> lên rank 1.</p></div>
+  <div class="case"><strong>A03 - False full-refund premise</strong><p><b>Question:</b> Is every student automatically entitled to full tuition refund whenever unhappy?</p><p><b>Ground truth:</b> no invented policy + refund timing 100%/50%/0% + policy version/effective date.</p><p><b>V1 thiếu:</b> refund paragraph có rank 1 nhưng thiếu đủ scope/version facet trong top evidence.</p></div>
+  <div class="footer"></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">07 - Motivation for V2</div>
+  <h2>Từ fail case sang thiết kế V2</h2>
+  <table>
+    <tr><th>Problem từ V1</th><th>Motivation</th><th>V2 mechanism</th></tr>
+    <tr><td>Đúng file nhưng sai section</td><td>M02 cần paragraph renewal, không phải overview scholarship.</td><td>Intent/phrase boost cho các cụm evidence bắt buộc.</td></tr>
+    <tr><td>Thiếu nhiều facet</td><td>M04/H01/A03 cần approvals + fee + deadline + consequence hoặc nhiều document.</td><td>Evidence-aware top-k, ưu tiên chunk chứa nhiều phrase quan trọng.</td></tr>
+    <tr><td>Lexical collision</td><td>M07 bị service complaint lấn grade appeal.</td><td>Collision penalty cho intent gần nghĩa nhưng sai policy.</td></tr>
+    <tr><td>Safety scope bị chìm</td><td>A01/A02 phải lấy scope guardrail trước domain document.</td><td>Scope/safety boost mạnh cho <code>00_system_scope.md</code>.</td></tr>
+  </table>
+  <p class="note">V2 không tăng top-k một cách mù quáng; nó thay đổi thứ tự evidence để generator nhìn thấy đúng đoạn sớm hơn.</p>
+  <div class="footer"></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">08 - V2 reranker</div>
+  <h2>Rerank score và motivation từng phần</h2>
+  <div class="card"><h3>Công thức triển khai</h3><p><code>rerank_score(d,q) = BM25_score(d,q) + intent_bonus + evidence_phrase_bonus - collision_penalty</code></p><p>Candidate pool lấy từ BM25 sau query expansion, sau đó V2 cộng/trừ điểm theo rule domain. Chunk score cao hơn được xếp lên trước.</p></div>
+  <div class="grid" style="margin-top:1rem">
+    <div class="card"><h3>Intent / phrase boost</h3><p><b>Motivation:</b> nếu query hỏi renewal, late add, refund, grade appeal thì phải ưu tiên các phrase tạo nên câu trả lời.</p><p><b>Ví dụ:</b> renewal boost <code>to renew</code>, <code>term GPA</code>, <code>cumulative GPA</code>, <code>graded Northstar credits</code>, mỗi phrase +2.5.</p></div>
+    <div class="card"><h3>Scope boost</h3><p><b>Motivation:</b> adversarial/out-of-scope phải lấy policy guardrail trước.</p><p><b>Rule:</b> query chứa <code>diagnose</code>, <code>hidden system</code>, <code>credentials</code>, <code>prompt</code> và chunk thuộc <code>00_system_scope.md</code> thì +12.0.</p></div>
+    <div class="card"><h3>Source repeat decay</h3><p><b>Motivation:</b> tránh top-k bị một source chiếm hết khi có nhiều document cần phối hợp.</p><p><b>Rule:</b> chunk cùng source xuất hiện nhiều lần bị nhân <code>0.9^n</code> trước rerank.</p></div>
+    <div class="card"><h3>Evidence-aware top-k</h3><p><b>Motivation:</b> top-k không chỉ cần “liên quan”, mà cần đủ evidence để trả lời.</p><p><b>Readout:</b> Recall@3 tăng lên 1.000, nghĩa là gold evidence đã xuất hiện trong top-3 cho toàn bộ 20 case.</p></div>
+  </div>
+  <div class="footer"></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">09 - Collision penalty</div>
+  <h2>Collision penalty: nói sau khi đã thấy fail case</h2>
+  <div class="case"><strong>Collision không phải duplicate</strong><p>Collision là khi chunk có lexical overlap cao với query nhưng thuộc intent/policy khác. M07 là ví dụ: <code>grade appeal</code> bị nhầm với <code>service complaint</code>.</p></div>
+  <div class="grid">
+    <div class="card"><h3>Công thức riêng cho penalty</h3><p><code>collision_penalty(d,q) = λ_collision</code> nếu <code>query_intent</code> và <code>chunk_intent</code> là cặp dễ nhầm nhưng sai policy.</p><p>Ngược lại: <code>collision_penalty = 0</code>.</p></div>
+    <div class="card"><h3>Rule M07 trong code</h3><p>Nếu query chứa <code>grade appeal</code> và chunk chứa <code>service complaint</code> thì trừ <code>3.0</code>.</p><p>Đồng thời chunk đúng được cộng +3.0 cho từng phrase: <code>grade appeal is different</code>, <code>request clarification</code>, <code>final grade</code>, <code>instructor</code>.</p></div>
+  </div>
+  <div class="case good"><strong>Kết quả M07</strong><p>V1: service-complaint paragraph rank 1. V2: exact grade-appeal paragraph rank 1, vì score đúng intent vượt score lexical-overlap sai intent.</p></div>
+  <div class="footer"></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">10 - V2 result</div>
+  <h2>V2 result: retrieval tăng, answer vẫn cần contract</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>V2 retrieval</h3>
+      <div class="metric"><span>Recall@1</span><b>0.867</b></div>
+      <div class="metric"><span>Recall@3</span><b class="green">1.000</b></div>
+      <div class="metric"><span>nDCG@1</span><b>0.950</b></div>
+      <div class="metric"><span>nDCG@3</span><b class="green">0.771</b></div>
+      <p class="note">So với V1: Recall@3 0.983 → 1.000; nDCG@3 0.752 → 0.771.</p>
+    </div>
+    <div class="card">
+      <h3>V2 answer</h3>
+      <div class="metric"><span>Pass rate</span><b>15/20 · 75%</b></div>
+      <div class="metric"><span>Faithfulness</span><b>0.688 · khá</b></div>
+      <div class="metric"><span>Relevance</span><b>0.706 · khá</b></div>
+      <div class="metric"><span>Completeness</span><b>0.858 · tốt</b></div>
+      <p class="note">Retrieval đã tốt hơn, nhưng generator đôi khi over-answer hoặc thiếu exact safety facet, nên pass rate chưa tăng.</p>
+    </div>
+  </div>
+  <div class="footer"></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">11 - LLM-as-a-judge calibration</div>
+  <h2>Confusion matrix: raw judge vs calibrated judge</h2>
+  <div class="grid3">
+    <div class="card"><h3>V1 judge</h3><table><tr><th>Human \ LLM</th><th>PASS</th><th>FAIL</th></tr><tr><td>PASS</td><td>11</td><td>4</td></tr><tr><td>FAIL</td><td>4</td><td>1</td></tr></table><p>Accuracy <b>0.600</b> · F1 <b>0.733</b></p></div>
+    <div class="card"><h3>V2 raw judge</h3><table><tr><th>Human \ LLM</th><th>PASS</th><th>FAIL</th></tr><tr><td>PASS</td><td>15</td><td>0</td></tr><tr><td>FAIL</td><td>5</td><td>0</td></tr></table><p>Accuracy <b>0.750</b> · F1 <b>0.857</b></p></div>
+    <div class="card"><h3>V2 calibrated</h3><table><tr><th>Human \ LLM</th><th>PASS</th><th>FAIL</th></tr><tr><td>PASS</td><td class="green"><b>15</b></td><td>0</td></tr><tr><td>FAIL</td><td>0</td><td class="green"><b>5</b></td></tr></table><p>Accuracy <b class="green">1.000</b> · F1 <b class="green">1.000</b></p></div>
+  </div>
+  <div class="card" style="margin-top:1rem"><h3>Calibration sửa gì?</h3><p>Raw judge quá dễ với strict-fail. Calibration thêm rule: non-JSON recovery bằng reference coverage; adversarial phải đủ protected facets; out-of-scope phải nói rõ Northstar/student-service scope; over-answer không được thêm policy/version claim ngoài asked facet.</p><p class="note">V1 dùng human review của baseline; V2 dùng <code>artifacts/human_labels_v2.json</code> theo answer artifact V2. Artifact <code>artifacts/v2/judge_results.json</code> có cả <code>raw_confusion_matrix</code> và <code>confusion_matrix</code> sau calibration.</p></div>
+  <div class="footer"></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">12 - Conclusion</div>
+  <h2>Kết luận và hướng tiếp theo</h2>
+  <div class="grid3">
+    <div class="card"><h3>Đã cải thiện</h3><p class="green">Recall@3: 0.983 → 1.000</p><p class="green">nDCG@3: 0.752 → 0.771</p><p class="green">Judge agreement: 0.600 → 1.000 sau calibration</p></div>
+    <div class="card"><h3>Còn tồn tại</h3><p>Answer pass vẫn 75% vì generator có lúc over-answer hoặc thiếu exact safety wording.</p><p>M04/H01/A03 cần evidence bundle + answer contract.</p></div>
+    <div class="card"><h3>V3 direction</h3><p>Facet-aware reranking.</p><p>Deterministic scope gate.</p><p>Generator checklist theo từng case type.</p><p>Judge structured output + retry + calibrated rules.</p></div>
+  </div>
+  <div class="card" style="margin-top:1.4rem"><h3>Final message</h3><p>Muốn RAG chính xác hơn không chỉ là lấy nhiều context hơn. Cần đúng evidence, đúng thứ tự, đủ facet, và judge phải được calibration để không quá dễ với câu trả lời nghe hợp lý nhưng thiếu rubric.</p></div>
+  <div class="footer"></div>
+</section>
+
+</main>
+<div class="controls"><button onclick="prev()">← Prev</button><button onclick="next()">Next →</button></div>
+<script>
+let i=0;const slides=[...document.querySelectorAll('.slide')];
+function show(n){i=(n+slides.length)%slides.length;slides.forEach((s,k)=>s.classList.toggle('active',k===i));}
+function next(){show(i+1)}function prev(){show(i-1)}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' ')next();if(e.key==='ArrowLeft')prev()});
+document.querySelectorAll('.slide').forEach((s,k)=>{const f=s.querySelector('.footer');if(f)f.textContent=String(k+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0')});
+</script>
+</body>
+</html>

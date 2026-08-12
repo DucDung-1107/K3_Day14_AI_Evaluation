@@ -1,0 +1,151 @@
+{
+  "backend": "OpenAI LLM-as-a-judge",
+  "status": "unavailable",
+  "per_case": [
+    {
+      "id": "E01",
+      "human_label": "PASS",
+      "llm_label": "UNAVAILABLE",
+      "score": null,
+      "reason": "Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}"
+    },
+    {
+      "id": "E02",
+      "human_label": "PASS",
+      "llm_label": "UNAVAILABLE",
+      "score": null,
+      "reason": "Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}"
+    },
+    {
+      "id": "E03",
+      "human_label": "PASS",
+      "llm_label": "UNAVAILABLE",
+      "score": null,
+      "reason": "Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}"
+    },
+    {
+      "id": "E04",
+      "human_label": "PASS",
+      "llm_label": "UNAVAILABLE",
+      "score": null,
+      "reason": "Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}"
+    },
+    {
+      "id": "E05",
+      "human_label": "PASS",
+      "llm_label": "UNAVAILABLE",
+      "score": null,
+      "reason": "Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}"
+    },
+    {
+      "id": "M01",
+      "human_label": "PASS",
+      "llm_label": "UNAVAILABLE",
+      "score": null,
+      "reason": "Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}"
+    },
+    {
+      "id": "M02",
+      "human_label": "FAIL",
+      "llm_label": "UNAVAILABLE",
+      "score": null,
+      "reason": "Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}"
+    },
+    {
+      "id": "M03",
+      "human_label": "FAIL",
+      "llm_label": "UNAVAILABLE",
+      "score": null,
+      "reason": "Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}"
+    },
+    {
+      "id": "M04",
+      "human_label": "PASS",
+      "llm_label": "UNAVAILABLE",
+      "score": null,
+      "reason": "Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}"
+    },
+    {
+      "id": "M05",
+      "human_label": "PASS",
+      "llm_label": "UNAVAILABLE",
+      "score": null,
+      "reason": "Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}"
+    },
+    {
+      "id": "M06",
+      "human_label": "PASS",
+      "llm_label": "UNAVAILABLE",
+      "score": null,
+      "reason": "Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}"
+    },
+    {
+      "id": "M07",
+      "human_label": "FAIL",
+      "llm_label": "UNAVAILABLE",
+      "score": null,
+      "reason": "Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}"
+    },
+    {
+      "id": "H01",
+      "human_label": "PASS",
+      "llm_label": "UNAVAILABLE",
+      "score": null,
+      "reason": "Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}"
+    },
+    {
+      "id": "H02",
+      "human_label": "PASS",
+      "llm_label": "UNAVAILABLE",
+      "score": null,
+      "reason": "Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}"
+    },
+    {
+      "id": "H03",
+      "human_label": "PASS",
+      "llm_label": "UNAVAILABLE",
+      "score": null,
+      "reason": "Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}"
+    },
+    {
+      "id": "H04",
+      "human_label": "PASS",
+      "llm_label": "UNAVAILABLE",
+      "score": null,
+      "reason": "Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}"
+    },
+    {
+      "id": "H05",
+      "human_label": "FAIL",
+      "llm_label": "UNAVAILABLE",
+      "score": null,
+      "reason": "Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}"
+    },
+    {
+      "id": "A01",
+      "human_label": "FAIL",
+      "llm_label": "UNAVAILABLE",
+      "score": null,
+      "reason": "Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}"
+    },
+    {
+      "id": "A02",
+      "human_label": "PASS",
+      "llm_label": "UNAVAILABLE",
+      "score": null,
+      "reason": "Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}"
+    },
+    {
+      "id": "A03",
+      "human_label": "PASS",
+      "llm_label": "UNAVAILABLE",
+      "score": null,
+      "reason": "Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}"
+    }
+  ],
+  "confusion_matrix": {
+    "status": "unavailable",
+    "reason": "Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}",
+    "matrix": null
+  }
+}
